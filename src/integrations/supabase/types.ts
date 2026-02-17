@@ -14,7 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      mfo_offers: {
+        Row: {
+          amount_max: number
+          amount_min: number
+          approval_rate: string
+          created_at: string
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          referral_url: string
+          sort_order: number
+          term_max_days: number
+          term_min_days: number
+        }
+        Insert: {
+          amount_max?: number
+          amount_min?: number
+          approval_rate?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          referral_url: string
+          sort_order?: number
+          term_max_days?: number
+          term_min_days?: number
+        }
+        Update: {
+          amount_max?: number
+          amount_min?: number
+          approval_rate?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          referral_url?: string
+          sort_order?: number
+          term_max_days?: number
+          term_min_days?: number
+        }
+        Relationships: []
+      }
+      quiz_sessions: {
+        Row: {
+          answers: Json
+          completed_at: string | null
+          created_at: string
+          id: string
+          priority: string
+          selected_offer_id: string | null
+          telegram_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          priority?: string
+          selected_offer_id?: string | null
+          telegram_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          priority?: string
+          selected_offer_id?: string | null
+          telegram_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_sessions_selected_offer_id_fkey"
+            columns: ["selected_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mfo_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
