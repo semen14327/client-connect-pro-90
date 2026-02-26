@@ -1,49 +1,50 @@
-import { useGameState } from '@/hooks/useGameState';
-import { CharacterSelectScreen } from '@/components/game/CharacterSelectScreen';
-import { GameDashboard } from '@/components/game/GameDashboard';
-import { EventScreen } from '@/components/game/EventScreen';
-import { MonthEndScreen } from '@/components/game/MonthEndScreen';
-import { GameOverScreen } from '@/components/game/GameOverScreen';
+import { useCS2State } from '@/hooks/useCS2State';
+import { AppHeader } from '@/components/cs2/AppHeader';
+import { BottomNav } from '@/components/cs2/BottomNav';
+import { HomePage } from '@/components/cs2/HomePage';
+import { TournamentsPage } from '@/components/cs2/TournamentsPage';
+import { TeamBuilderPage } from '@/components/cs2/TeamBuilderPage';
+import { LeaderboardPage } from '@/components/cs2/LeaderboardPage';
+import { ProfilePage } from '@/components/cs2/ProfilePage';
+import { AdminPage } from '@/components/cs2/AdminPage';
 
 const Index = () => {
   const {
-    state,
-    startGame,
-    advanceDay,
-    resolveEvent,
-    startNextMonth,
-    takeLoan,
-    payDebt,
-    resetGame,
-  } = useGameState();
-
-  if (!state) {
-    return (
-      <div className="min-h-screen bg-background max-w-lg mx-auto">
-        <CharacterSelectScreen onStart={startGame} />
-      </div>
-    );
-  }
+    page, setPage,
+    balance,
+    selectedPlayers, togglePlayer,
+    captainId, setCaptainId,
+    budget, mode, switchMode,
+    roleFilter, setRoleFilter,
+    confirmTeam,
+  } = useCS2State();
 
   return (
-    <div className="min-h-screen bg-background max-w-lg mx-auto">
-      {state.phase === 'daily' && (
-        <GameDashboard
-          state={state}
-          onAction={advanceDay}
-          onTakeLoan={takeLoan}
-          onPayDebt={payDebt}
+    <div className="min-h-screen bg-background max-w-lg mx-auto relative z-[1]">
+      <AppHeader balance={balance} />
+      <BottomNav active={page} onNavigate={setPage} />
+
+      {page === 'home' && <HomePage onNavigate={setPage} />}
+      {page === 'tournaments' && (
+        <TournamentsPage onOpenTournament={() => setPage('team')} />
+      )}
+      {page === 'team' && (
+        <TeamBuilderPage
+          selectedPlayers={selectedPlayers}
+          captainId={captainId}
+          budget={budget}
+          mode={mode}
+          roleFilter={roleFilter}
+          onTogglePlayer={togglePlayer}
+          onSetCaptain={setCaptainId}
+          onSwitchMode={switchMode}
+          onSetRoleFilter={setRoleFilter}
+          onConfirm={confirmTeam}
         />
       )}
-      {state.phase === 'event' && state.currentEvent && (
-        <EventScreen event={state.currentEvent} onChoice={resolveEvent} />
-      )}
-      {state.phase === 'month-end' && state.monthSummary && (
-        <MonthEndScreen state={state} summary={state.monthSummary} onContinue={startNextMonth} />
-      )}
-      {(state.phase === 'game-over' || state.phase === 'victory') && (
-        <GameOverScreen state={state} onRestart={resetGame} />
-      )}
+      {page === 'leaderboard' && <LeaderboardPage />}
+      {page === 'profile' && <ProfilePage balance={balance} />}
+      {page === 'admin' && <AdminPage />}
     </div>
   );
 };
